@@ -1,0 +1,35 @@
+docker-compose run django django-admin startproject core .
+docker exec -it postgres psql -U postgres
+docker exec -it django bash
+
+
+docker-compose up / down
+docker-compose up -d
+
+Postgres
+==========
+
+docker exec -it postgres psql -U postgres
+\c <database_name>
+\d
+\d+ <table_name>
+\q
+
+
+==========
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'pgdb',
+        'PORT': 5432,
+    }
+}
+
+==========
+
+
+python manage.py startapp -name-
+python manage.py createsuperuser
