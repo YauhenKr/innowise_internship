@@ -8,6 +8,8 @@ Django = "*"
 djangorestframework = "*"
 python-dotenv = "*"
 psycopg2-binary = "*"
+PyJWT = "*"
+Pillow = "*"
 
 #[dev-packages] # Here goes your package requirements for developing the application and its versions (which packages you will use when developing the application)
 #pylint = "*"
