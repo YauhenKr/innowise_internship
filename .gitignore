@@ -12,3 +12,4 @@
 .idea/**/gradle.xml
 .idea/**/libraries
 .idea/inspectionProfiles
+.env
