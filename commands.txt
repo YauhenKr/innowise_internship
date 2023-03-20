@@ -33,3 +33,8 @@ DATABASES = {
 
 python manage.py startapp -name-
 python manage.py createsuperuser
+
+
+DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 0.0.0.0 [::1]
+
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")

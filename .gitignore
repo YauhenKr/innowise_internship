@@ -12,3 +12,5 @@
 .idea/**/gradle.xml
 .idea/**/libraries
 .idea/inspectionProfiles
+.env
+commands.txt
