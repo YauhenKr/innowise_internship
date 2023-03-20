@@ -10,7 +10,7 @@ services:
         volumes:
             - .:/app
         ports:
-            - "8000:8000"
+            - "8001:8001"
         networks:
             - main
         depends_on:
