@@ -8,15 +8,27 @@ services:
             dockerfile: Dockerfile
         container_name: django
         volumes:
-            - .:/usr/src/app
+            - .:/app
         ports:
             - "8000:8000"
+        networks:
+            - main
         depends_on:
-            - pgdb
-    pgdb:
+            - postgresql
+    postgresql:
         image: postgres
-        container_name: pgdb
+        container_name: postgresql
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
         ports:
             - "5432:5432"
+        networks:
+            - main
         env_file:
             - .env
+
+networks:
+    main:
+
+volumes:
+    postgres_data:
