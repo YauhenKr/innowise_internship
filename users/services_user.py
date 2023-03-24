@@ -12,7 +12,7 @@ class UsersServices:
 
     @classmethod
     def get_user_through_payload(cls, payload) -> User:
-        return User.objects.filter(pk=payload['user_pk']).first()
+        return User.objects.filter(pk=payload['user_id']).first()
 
     @classmethod
     def check_user(cls, email, password) -> User:

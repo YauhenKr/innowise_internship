@@ -1,5 +1,6 @@
-from django.db import models
 import uuid
+
+from django.db import models
 
 
 class Tag(models.Model):
@@ -43,12 +44,9 @@ class Post(models.Model):
 
     like = models.ManyToManyField('users.User', related_name='likes')
 
+    reply_to = models.ForeignKey('Post', on_delete=models.SET_NULL, null=True, related_name='replies')
+
     def __str__(self):
         return str(f'{self.page.owner.username} | {self.content}')
 
     objects = models.Manager()
-
-
-class PostReplies(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    reply_to = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True, related_name='replies')

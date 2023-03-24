@@ -4,13 +4,20 @@ from innotwits.models import Page, Post, Tag
 from users.serializers import UserSerializer
 
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['name']
+
+
 class PageSerializer(serializers.ModelSerializer):
     owner = UserSerializer()
     post = serializers.SerializerMethodField(method_name='get_posts')
+    tags = TagSerializer()
 
     class Meta:
         model = Page
-        fields = ['name', 'description', 'owner', 'post', 'is_private', ]           # add image
+        fields = ['name', 'description', 'owner', 'post', 'tags', 'is_private', ]
 
     def get_posts(self, obj):
         return PostSerializer(obj.posts, many=True).data
@@ -19,7 +26,7 @@ class PageSerializer(serializers.ModelSerializer):
 class PrivatePageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Page
-        fields = ['name', ]           # add image
+        fields = ['name', ]
 
 
 class CreatePageSerializer(serializers.ModelSerializer):
@@ -47,26 +54,20 @@ class UpdatePageSerializer(serializers.ModelSerializer):
         }
 
 
-class TagSerializer(serializers.ModelSerializer):
+class ReplyToSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Tag
-        fields = ['name']
+        model = Post
+        fields = ['content', 'created_at']
 
 
 class PostSerializer(serializers.ModelSerializer):
-    # page = PageSerializer() I can't work through this serializers because 'This field is required'
+    reply_to = ReplyToSerializer()
 
     class Meta:
         model = Post
-        fields = ['page', 'content']
+        fields = ['page', 'content', 'created_at', 'reply_to']
 
         extra_kwargs = {
             'like': {'required': False},
+            'reply_to': {'required': False},
         }
-
-
-# class LikeSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Post
-#         fields = ['page']
-

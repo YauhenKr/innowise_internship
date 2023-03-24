@@ -4,8 +4,6 @@ from users.models import User
 
 
 class IsOwnerAdminModeratorCanEdit(permissions.BasePermission):
-    """
-    """
     allowed_fields = {'name', 'description', 'image', 'is_private'}
     admin_fields = {'is_blocked', 'unblock_date'}
 
@@ -31,7 +29,6 @@ class IsAdminModeratorDeleteIsOwnerDeleteUpdate(permissions.BasePermission):
         user = request.user
         page_user = obj.page.owner
 
-        #  all([])
         if role in [User.Roles.USER, User.Roles.ADMIN, User.Roles.MODERATOR]\
                 and request.method in ['PUT', 'PATCH', 'DELETE']\
                 and user == page_user:
