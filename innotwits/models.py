@@ -1,5 +1,5 @@
-import datetime
 import uuid
+from datetime import datetime
 
 from django.core.validators import validate_image_file_extension
 from django.db import models
@@ -15,7 +15,9 @@ class Tag(models.Model):
 
 
 def user_directory_path(instance, filename):
-    return "images/{0}/{1}".format(instance.name, filename)
+    page_name = instance.name
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    return f"pages/{page_name}/{current_date}/{filename}"
 
 
 class Page(models.Model):

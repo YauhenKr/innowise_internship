@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import validate_image_file_extension
 from django.db import models
@@ -7,7 +9,9 @@ from users import signals
 
 
 def user_directory_path(instance, filename):
-    return "images/user/{0}/{1}".format(instance.username, filename)
+    username = instance.username
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    return f"users/{username}/{current_date}/{filename}"
 
 
 class User(AbstractUser):
