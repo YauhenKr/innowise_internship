@@ -1,3 +1,5 @@
+import datetime
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.http import Http404
@@ -124,6 +126,12 @@ class PageServices:
         except ObjectDoesNotExist:
             return False, 'You have no one request'
 
+    @classmethod
+    def unblock_page(cls) -> None:
+        now = datetime.datetime.today().strftime('%Y-%m-%d')
+        Page.objects.filter(unblock_date__contains=now).update(is_blocked=False)
+        return None
+
 
 class PostServices:
     @classmethod
@@ -161,3 +169,11 @@ class PostServices:
         )
 
         return create_post
+
+    @classmethod
+    def create_mail(cls, instance, post_id):
+        title = f'New post from page {instance}'
+        text = f'This is proof the task worked! http://127.0.0.1:8000/post/{post_id}/ link to post'
+        emails = instance.page.followers.all().values_list('email', flat=True)
+
+        return title, text, list(emails)

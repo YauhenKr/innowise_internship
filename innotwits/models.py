@@ -1,5 +1,7 @@
+import datetime
 import uuid
 
+from django.core.validators import validate_image_file_extension
 from django.db import models
 
 
@@ -12,6 +14,10 @@ class Tag(models.Model):
     objects = models.Manager()
 
 
+def user_directory_path(instance, filename):
+    return "images/{0}/{1}".format(instance.name, filename)
+
+
 class Page(models.Model):
     name = models.CharField(max_length=80)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
@@ -21,13 +27,18 @@ class Page(models.Model):
     owner = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='pages')
     followers = models.ManyToManyField('users.User', related_name='follows')
 
-    image = models.URLField(null=True, blank=True)
+    image = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=user_directory_path,
+        validators=[validate_image_file_extension]
+    )
 
     is_private = models.BooleanField(default=False)
     follow_requests = models.ManyToManyField('users.User', related_name='requests')
 
     is_blocked = models.BooleanField(default=False)
-    unblock_date = models.DateTimeField(null=True, blank=True)
+    unblock_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.owner.username} | {self.name}"
