@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import check_password
 from rest_framework.exceptions import AuthenticationFailed
@@ -23,3 +25,11 @@ class UsersServices:
             raise AuthenticationFailed('Invalid password.')
 
         return user
+
+
+class ModelsServices:
+    @staticmethod
+    def user_directory_path(instance, filename):
+        username = instance.username
+        current_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        return f"users/{username}/{current_date}/{filename}"

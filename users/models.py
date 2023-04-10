@@ -1,8 +1,10 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import validate_image_file_extension
 from django.db import models
 from django.db.models.signals import post_save
 
 from users import signals
+from users.services_user import ModelsServices
 
 
 class User(AbstractUser):
@@ -13,7 +15,12 @@ class User(AbstractUser):
 
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(unique=True)
-    image_s3_path = models.CharField(max_length=200, null=True, blank=True)
+    image = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=ModelsServices.user_directory_path,
+        validators=[validate_image_file_extension]
+    )
     role = models.CharField(max_length=9, choices=Roles.choices, default=Roles.USER)
 
     title = models.CharField(max_length=80)

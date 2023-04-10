@@ -5,11 +5,8 @@ from innotwits import views
 
 
 router = SimpleRouter()
-router.register(r'page',
-                views.PageViewSet)
-
-router.register(r'post',
-                views.PostViewSet)
+router.register(r'page', views.PageViewSet)
+router.register(r'post', views.PostViewSet)
 
 urlpatterns = [
     path('', include(router.urls))

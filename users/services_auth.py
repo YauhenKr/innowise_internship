@@ -41,7 +41,3 @@ class AuthenticationServices:
             raise ParseError()
 
         return payload
-
-    @classmethod
-    def check_middleware(cls):
-        pass

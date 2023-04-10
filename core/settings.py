@@ -2,6 +2,8 @@ import datetime
 import os
 
 from pathlib import Path
+
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 
@@ -37,6 +39,8 @@ CORE_APPS = [
 
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'django_celery_results',
+    'django_celery_beat'
 ]
 
 LOCAL_APPS = [
@@ -156,4 +160,39 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'users.authentication.JWTAuthentication',
     ),
+}
+
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+CELERY_ENABLED = True
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Warsaw'
+CELERY_TASK_TRACK_STARTED = True
+
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_SES_REGION_NAME = os.getenv('AWS_SES_REGION_NAME')
+AWS_SES_REGION_ENDPOINT = os.getenv('AWS_SES_REGION_ENDPOINT')
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+
+AWS_STORAGE_BUCKET_NAME = 'innoter-yauhen'
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+AWS_DEFAULT_ACL = 'public-read'
+
+DEFAULT_FILE_STORAGE = 'core.storages.MediaStore'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+CELERY_BEAT_SCHEDULE = {
+    "scheduled_task": {
+        "task": "innotwits.tasks.unblock_page",
+        "schedule": crontab(minute=0, hour=0),
+    }
 }

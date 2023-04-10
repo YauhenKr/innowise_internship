@@ -17,7 +17,10 @@ class PageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Page
-        fields = ['name', 'description', 'owner', 'post', 'tags', 'is_private', ]
+        fields = [
+            'name', 'description', 'owner',
+            'image', 'post', 'tags', 'is_private',
+        ]
 
     def get_posts(self, obj):
         return PostSerializer(obj.posts, many=True).data
@@ -50,7 +53,6 @@ class UpdatePageSerializer(serializers.ModelSerializer):
             'owner': {'required': False},
             'is_private': {'required': False},
             'is_blocked': {'required': False}
-            # tag
         }
 
 
@@ -61,7 +63,7 @@ class ReplyToSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    reply_to = ReplyToSerializer()
+    reply_to = ReplyToSerializer(required=False)
 
     class Meta:
         model = Post
