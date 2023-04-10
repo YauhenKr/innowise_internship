@@ -40,22 +40,20 @@ class RegistrationModelViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def login(self, request):
+        serializer = self.get_serializer(data=request.data)
         try:
-            serializer = self.get_serializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                email = serializer.validated_data.get('email')
-                password = serializer.validated_data.get('password')
-                user = UsersServices.check_user(email, password)
-                token = AuthenticationServices.encode_token(user)
-                return Response(
-                    {
-                        'username': user.username,
-                        'token': token
-                    },
-                    status=status.HTTP_200_OK
-                )
-            else:
-                res = {'error': 'Check you credentials'}
-                return Response(res, status=status.HTTP_403_FORBIDDEN)
-        except KeyError:
-            return Response({'Error': 'please provide an email and a password'})
+            serializer.is_valid(raise_exception=True)
+            email = serializer.validated_data.get('email')
+            password = serializer.validated_data.get('password')
+            user = UsersServices.check_user(email, password)
+            token = AuthenticationServices.encode_token(user)
+            return Response(
+                {
+                    'username': user.username,
+                    'token': token
+                },
+                status=status.HTTP_200_OK
+            )
+        except:
+            res = {'error': 'Check you credentials'}
+            return Response(res, status=status.HTTP_404_NOT_FOUND)

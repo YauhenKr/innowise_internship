@@ -3,7 +3,6 @@ from django.conf import settings
 from django.http import JsonResponse
 
 from users.services_auth import AuthenticationServices
-from users.services_user import UsersServices
 
 
 class JWTAuthenticationMiddleware:
@@ -17,7 +16,7 @@ class JWTAuthenticationMiddleware:
                 token = AuthenticationServices.get_the_token_from_header(header)
                 try:
                     payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-                    user = UsersServices.get_user_through_payload(payload)
+                    user = AuthenticationServices.get_user_through_payload(payload)
                     if not user:
                         return JsonResponse({'error': 'User not found.'}, status=401)
                     request.user = user

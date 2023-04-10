@@ -11,15 +11,9 @@ class UsersServices:
         return User.objects.get(email=email)
 
     @classmethod
-    def get_user_through_payload(cls, payload) -> User:
-        return User.objects.filter(pk=payload['user_id']).first()
-
-    @classmethod
     def check_user(cls, email, password) -> User:
         user = cls.get_user_by_email(email)
         user = get_object_or_404(User, username=user.username)
-
-        if not check_password(password, user.password):
-            raise AuthenticationFailed('Invalid password.')
-
-        return user
+        if check_password(password, user.password):
+            return user
+        raise AuthenticationFailed('Invalid password.')

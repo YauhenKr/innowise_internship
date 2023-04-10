@@ -6,7 +6,8 @@ from users import views
 
 router = SimpleRouter()
 router.register(r'auth',
-                views.RegistrationModelViewSet)
+                views.RegistrationModelViewSet,
+                basename='auth')
 
 
 urlpatterns = [

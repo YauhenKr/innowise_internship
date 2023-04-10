@@ -4,9 +4,10 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from innotwits.models import Page, Post, Tag
+from innotwits.models import Page, Post
 from innotwits.services import PageServices, PostServices
-from innotwits.permissions import IsOwnerAdminModeratorCanEdit, IsAdminModeratorDeleteIsOwnerDeleteUpdate
+from innotwits.permissions import IsOwnerAdminModeratorCanEdit,\
+    IsAdminModeratorDeleteIsOwnerDeleteUpdate
 from innotwits import serializers
 from users import serializers as user_serializers
 from users.models import User
@@ -43,20 +44,25 @@ class PageViewSet(viewsets.ModelViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid()
+        user_role = request.user.role
+        staff_or_not = request.user.is_staff
         page_id = kwargs['pk']
-        page = PageServices.get_page_by_access(request=self.request, page_id=page_id)
-        if not page:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        page = PageServices.get_page_by_access(
+            user_role, staff_or_not, page_id=page_id, user=request.user
+        )
         return Response(page, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         """
-        Create another page for user
+        Create page for user
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = User.objects.get(id=request.user.pk)
-        create_page = PageServices.create_page(serializer, user)
+        name = serializer.validated_data.get('name'),
+        description = serializer.validated_data.get('description'),
+        is_private = serializer.validated_data.get('is_private', False)
+        create_page = PageServices.create_page(name, description, user, is_private)
         return Response(
             serializers.CreatePageSerializer(create_page).data,
             status=status.HTTP_201_CREATED
@@ -121,18 +127,23 @@ class PageViewSet(viewsets.ModelViewSet):
         accept = request.data.get('accept')
         request_user_ids = request.data.get('request_user_ids')
         response_text = PageServices.approve_disapprove_request(page, user, request_user_ids, accept)
-        return Response(response_text)
+        return Response(response_text, status=status.HTTP_200_OK)
 
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
-    serializer_class = serializers.PostSerializer
 
     def get_permissions(self):
         if self.request.method in ['PATCH', 'PUT', 'DELETE'] and self.action != 'like':
             return [IsAdminModeratorDeleteIsOwnerDeleteUpdate(), ]
 
         return [IsAuthenticatedOrReadOnly(), ]
+
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return serializers.RetrievePostSerializer
+
+        return serializers.PostSerializer
 
     def list(self, request, *args, **kwargs):
         """
@@ -142,7 +153,7 @@ class PostViewSet(viewsets.ModelViewSet):
         posts = self.get_queryset()
         posts = PostServices.get_posts_list(user, posts)
         return Response(
-            serializers.PostSerializer(posts, many=True).data,
+            serializers.RetrievePostSerializer(posts, many=True).data,
             status=status.HTTP_200_OK
         )
 

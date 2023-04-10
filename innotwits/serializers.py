@@ -34,6 +34,7 @@ class PrivatePageSerializer(serializers.ModelSerializer):
 
 class CreatePageSerializer(serializers.ModelSerializer):
     owner = UserSerializer(required=False)
+    is_private = serializers.BooleanField(required=False)
 
     class Meta:
         model = Page
@@ -63,8 +64,6 @@ class ReplyToSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    reply_to = ReplyToSerializer(required=False)
-
     class Meta:
         model = Post
         fields = ['page', 'content', 'created_at', 'reply_to']
@@ -72,4 +71,16 @@ class PostSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'like': {'required': False},
             'reply_to': {'required': False},
+        }
+
+
+class RetrievePostSerializer(serializers.ModelSerializer):
+    reply_to = ReplyToSerializer()
+
+    class Meta:
+        model = Post
+        fields = ['page', 'content', 'created_at', 'reply_to']
+
+        extra_kwargs = {
+            'like': {'required': False},
         }

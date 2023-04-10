@@ -34,7 +34,7 @@ class Page(models.Model):
         validators=[validate_image_file_extension]
     )
 
-    is_private = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=False, null=True)
     follow_requests = models.ManyToManyField('users.User', related_name='requests')
 
     is_blocked = models.BooleanField(default=False)

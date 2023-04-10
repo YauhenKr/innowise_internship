@@ -3,6 +3,7 @@ import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from rest_framework import exceptions
 
 from innotwits.models import Page, Tag, Post
@@ -12,13 +13,12 @@ from users.models import User
 
 class PageServices:
     @classmethod
-    def get_page_by_access(cls, request, page_id) -> serializers:
-        user_role = request.user.role
-        staff_or_not = request.user.is_staff
-        page = cls.get_page_by_id(page_id)
+    def get_page_by_access(cls, user_role, staff_or_not, page_id, user) -> serializers:
+        page = get_object_or_404(Page, pk=page_id)
 
         if user_role == 'admin' or user_role == 'moderator' or staff_or_not or\
-                (user_role == 'user' and page.is_private is False and page.owner.is_blocked is False):
+                (user_role == 'user' and page.is_private is False
+                 and page.owner.is_blocked is False) or page.owner == user:
             return serializers.PageSerializer(
                 page,
                 many=False
@@ -35,15 +35,12 @@ class PageServices:
             raise exceptions.NotAcceptable
 
     @classmethod
-    def get_page_by_id(cls, page_id) -> Page:
-        return Page.objects.filter(id=page_id).first()
-
-    @classmethod
-    def create_page(cls, serializer, user) -> Page:
+    def create_page(cls, name, description, user, is_private=False) -> Page:
         return Page.objects.create(
-            name=serializer.validated_data.get('name'),
-            description=serializer.validated_data.get('description'),
+            name=name,
+            description=description,
             owner_id=user.pk,
+            is_private=is_private
         )
 
     @classmethod
@@ -104,15 +101,19 @@ class PageServices:
     @classmethod
     def approve_disapprove_request(cls, page, user, request_user_ids, accept) -> str:
         if page.owner == user:
-            for user_id in request_user_ids:
-                if page.follow_requests.filter(id=user_id).exists():
-                    if not accept:
-                        page.follow_requests.remove(user_id)
-                        return 'All requests were disapproved successfully'
-                    else:
-                        page.followers.add(user_id)
-                        page.follow_requests.remove(user_id)
-                        return "User's requests were approved successfully"
+            if accept:
+                for user_id in page.follow_requests.filter(id__in=request_user_ids):
+                    page.followers.add(user_id)
+                    page.follow_requests.remove(user_id)
+                return "User's requests were approved successfully"
+
+            else:
+                for user_id in page.follow_requests.filter(id__in=request_user_ids):
+                    page.follow_requests.remove(user_id)
+                return 'All requests were disapproved successfully'
+
+        else:
+            return 'Forbidden. It is not your page!'
 
     @classmethod
     def get_requests_list(cls, user_id, page_id):
