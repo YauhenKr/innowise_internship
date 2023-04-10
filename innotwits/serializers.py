@@ -12,8 +12,8 @@ class TagSerializer(serializers.ModelSerializer):
 
 class PageSerializer(serializers.ModelSerializer):
     owner = UserSerializer()
-    post = serializers.SerializerMethodField(method_name='get_posts')
     tags = TagSerializer()
+    post = serializers.SerializerMethodField(method_name='get_posts')
 
     class Meta:
         model = Page

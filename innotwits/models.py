@@ -9,8 +9,6 @@ class Tag(models.Model):
     def __str__(self):
         return str(self.name)
 
-    objects = models.Manager()
-
 
 class Page(models.Model):
     name = models.CharField(max_length=80)
@@ -32,8 +30,6 @@ class Page(models.Model):
     def __str__(self):
         return f"{self.owner.username} | {self.name}"
 
-    objects = models.Manager()
-
 
 class Post(models.Model):
     page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name='posts')
@@ -48,5 +44,3 @@ class Post(models.Model):
 
     def __str__(self):
         return str(f'{self.page.owner.username} | {self.content}')
-
-    objects = models.Manager()

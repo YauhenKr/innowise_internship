@@ -15,12 +15,17 @@ class PageServices:
         staff_or_not = request.user.is_staff
         page = cls.get_page_by_id(page_id)
 
-        if user_role == 'admin' or user_role == 'moderator' or staff_or_not or\
-                (user_role == 'user' and page.is_private is False and page.owner.is_blocked is False):
-            return serializers.PageSerializer(
-                page,
-                many=False
-            ).data
+        if any([
+            user_role == User.Roles.ADMIN,
+            user_role == User.Roles.MODERATOR,
+            staff_or_not,
+            all([
+                user_role == User.Roles.USER,
+                not page.is_private,
+                not page.owner.is_blocked
+            ])
+        ]):
+                return serializers.PageSerializer(page, many=False).data
 
         elif user_role == 'user' and page.owner.is_blocked is False:
             if page.is_private:
@@ -137,18 +142,16 @@ class PostServices:
 
     @classmethod
     def get_liked_posts(cls, posts, request) -> list:
-        liked_posts = []
-        for post in posts:
-            if post.like.filter(id=request.user.pk).exists():
-                liked_posts.append(post)
+        liked_posts = posts.objects.filter(like__id=request.user.pk)
 
         return liked_posts
 
     @classmethod
     def get_posts_list(cls, user, posts) -> Post:
         followed_pages_id = Page.objects.filter(followers=user.pk).values_list('id', flat=True)
-        posts = posts.filter(Q(page__owner=user.pk) | Q(page__in=followed_pages_id)).\
-            filter(reply_to__isnull=True).order_by('created_at')
+        posts = posts.filter(
+            (Q(page__owner=user.pk) | Q(page__in=followed_pages_id)) & Q(reply_to__isnull=True)
+        ).order_by('created_at')
 
         return posts
 
