@@ -1,17 +1,10 @@
-from datetime import datetime
-
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import validate_image_file_extension
 from django.db import models
 from django.db.models.signals import post_save
 
 from users import signals
-
-
-def user_directory_path(instance, filename):
-    username = instance.username
-    current_date = datetime.now().strftime('%Y-%m-%d')
-    return f"users/{username}/{current_date}/{filename}"
+from users.services_user import ModelsServices
 
 
 class User(AbstractUser):
@@ -25,7 +18,7 @@ class User(AbstractUser):
     image = models.ImageField(
         null=True,
         blank=True,
-        upload_to=user_directory_path,
+        upload_to=ModelsServices.user_directory_path,
         validators=[validate_image_file_extension]
     )
     role = models.CharField(max_length=9, choices=Roles.choices, default=Roles.USER)

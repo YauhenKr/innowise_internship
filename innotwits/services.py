@@ -130,7 +130,6 @@ class PageServices:
     def unblock_page(cls) -> None:
         now = datetime.datetime.today().strftime('%Y-%m-%d')
         Page.objects.filter(unblock_date__contains=now).update(is_blocked=False)
-        return None
 
 
 class PostServices:
@@ -177,3 +176,11 @@ class PostServices:
         emails = instance.page.followers.all().values_list('email', flat=True)
 
         return title, text, list(emails)
+
+
+class ModelsServices:
+    @staticmethod
+    def user_directory_path(instance, filename):
+        page_name = instance.name
+        current_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        return f"pages/{page_name}/{current_date}/{filename}"

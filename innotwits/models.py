@@ -1,8 +1,9 @@
 import uuid
-from datetime import datetime
 
 from django.core.validators import validate_image_file_extension
 from django.db import models
+
+from innotwits.services import ModelsServices
 
 
 class Tag(models.Model):
@@ -12,12 +13,6 @@ class Tag(models.Model):
         return str(self.name)
 
     objects = models.Manager()
-
-
-def user_directory_path(instance, filename):
-    page_name = instance.name
-    current_date = datetime.now().strftime('%Y-%m-%d')
-    return f"pages/{page_name}/{current_date}/{filename}"
 
 
 class Page(models.Model):
@@ -32,7 +27,7 @@ class Page(models.Model):
     image = models.ImageField(
         null=True,
         blank=True,
-        upload_to=user_directory_path,
+        upload_to=ModelsServices.user_directory_path,
         validators=[validate_image_file_extension]
     )
 
