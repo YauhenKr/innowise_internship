@@ -1,11 +1,11 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from users.serializers import RegistrationSerializer, AuthenticationSerializer
+from users import serializers
 from users.models import User
 from users.services_user import UsersServices
 from users.services_auth import AuthenticationServices
@@ -13,14 +13,20 @@ from users.services_auth import AuthenticationServices
 
 class RegistrationModelViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    permission_classes = (AllowAny,)
-    serializer_class = RegistrationSerializer
+    serializer_class = serializers.RegistrationSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'PATCH':
+            return [IsAdminUser(), ]
+        return [AllowAny(), ]
 
     def get_serializer_class(self):
         if hasattr(self, 'action') and self.action == 'register':
-            return RegistrationSerializer
+            return serializers.RegistrationSerializer
         elif hasattr(self, 'action') and self.action == 'login':
-            return AuthenticationSerializer
+            return serializers.AuthenticationSerializer
+
+        return serializers.UserSerializer
 
     @action(detail=False, methods=['post'])
     def register(self, request):
@@ -34,22 +40,20 @@ class RegistrationModelViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def login(self, request):
+        serializer = self.get_serializer(data=request.data)
         try:
-            serializer = self.get_serializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                email = serializer.validated_data.get('email')
-                password = serializer.validated_data.get('password')
-                user = UsersServices.check_user(email, password)
-                token = AuthenticationServices.encode_token(user)
-                return Response(
-                    {
-                        'username': user.username,
-                        'token': token
-                    },
-                    status=status.HTTP_200_OK
-                )
-            else:
-                res = {'error': 'Check you credentials'}
-                return Response(res, status=status.HTTP_403_FORBIDDEN)
-        except KeyError:
-            return Response({'Error': 'please provide an email and a password'})
+            serializer.is_valid(raise_exception=True)
+            email = serializer.validated_data.get('email')
+            password = serializer.validated_data.get('password')
+            user = UsersServices.check_user(email, password)
+            token = AuthenticationServices.encode_token(user)
+            return Response(
+                {
+                    'username': user.username,
+                    'token': token
+                },
+                status=status.HTTP_200_OK
+            )
+        except:
+            res = {'error': 'Check you credentials'}
+            return Response(res, status=status.HTTP_404_NOT_FOUND)

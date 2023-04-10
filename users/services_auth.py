@@ -1,6 +1,8 @@
 import datetime
+from typing import Any
+
 import jwt
-from rest_framework.exceptions import AuthenticationFailed, ParseError
+from rest_framework import exceptions
 
 from core import settings
 from users.models import User
@@ -24,24 +26,22 @@ class AuthenticationServices:
         return token
 
     @classmethod
+    def get_user_through_payload(cls, payload) -> User:
+        return User.objects.filter(pk=payload['user_id']).first()
+
+    @classmethod
     def get_the_token_from_header(cls, token) -> str:
         token = token.replace('Bearer ', '').replace(' ', '')
         return token
 
     @classmethod
-    def check_jwt_token(cls, header) -> dict:
+    def check_jwt_token(cls, header) -> Any:
         jwt_token = AuthenticationServices.get_the_token_from_header(header)
         try:
             payload = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])
         except jwt.exceptions.InvalidSignatureError:
-            raise AuthenticationFailed('Invalid signature')
+            raise exceptions.AuthenticationFailed('Invalid signature')
         except jwt.exceptions.ExpiredSignatureError:
-            raise jwt.exceptions.ExpiredSignatureError('Token expired')
-        except:
-            raise ParseError()
+            raise exceptions.AuthenticationFailed('Token has expired')
 
         return payload
-
-    @classmethod
-    def check_middleware(cls):
-        pass

@@ -10,10 +10,17 @@ python-dotenv = "*"
 psycopg2-binary = "*"
 PyJWT = "*"
 Pillow = "*"
-
-#[dev-packages] # Here goes your package requirements for developing the application and its versions (which packages you will use when developing the application)
-#pylint = "*"
-#wheel = "*"
+celery = "*"
+django-celery-results = "*"
+django-ses = "*"
+django-celery-beat = "*"
+tzdata = "*"
+boto3 = "*"
+django-storages = "*"
+pytest = "*"
+pytest-django = "*"
+pytest-pythonpath = "*"
+requests = "*"
 
 [requires]
 python_version = "3.10"

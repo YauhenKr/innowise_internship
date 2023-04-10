@@ -13,3 +13,5 @@ RUN pipenv install --system --deploy --ignore-pipfile
 
 RUN chmod +x entrypoint.sh
 CMD ./entrypoint.sh
+
+EXPOSE 8000
