@@ -1,11 +1,11 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
-from users.serializers import RegistrationSerializer, AuthenticationSerializer
+from users import serializers
 from users.models import User
 from users.services_user import UsersServices
 from users.services_auth import AuthenticationServices
@@ -13,14 +13,20 @@ from users.services_auth import AuthenticationServices
 
 class RegistrationModelViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    permission_classes = (AllowAny,)
-    serializer_class = RegistrationSerializer
+    serializer_class = serializers.RegistrationSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'PATCH':
+            return [IsAdminUser(), ]
+        return [AllowAny(), ]
 
     def get_serializer_class(self):
         if hasattr(self, 'action') and self.action == 'register':
-            return RegistrationSerializer
+            return serializers.RegistrationSerializer
         elif hasattr(self, 'action') and self.action == 'login':
-            return AuthenticationSerializer
+            return serializers.AuthenticationSerializer
+
+        return serializers.UserSerializer
 
     @action(detail=False, methods=['post'])
     def register(self, request):

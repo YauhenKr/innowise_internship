@@ -30,11 +30,12 @@ def get_the_token_from_header(token) -> str:
 
 
 def get_user_by_email(email) -> User:
-    return User.objects.get(email=email)
+    user = get_object_or_404(User, email=email)
+    return user
 
 
 def _get_user_through_payload(payload) -> User:
-    return User.objects.filter(pk=payload['user_pk']).first()
+    return User.objects.filter(id=payload['user_id']).first()
 
 
 def check_user(email, password) -> User:
