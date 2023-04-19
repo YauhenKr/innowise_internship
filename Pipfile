@@ -21,6 +21,7 @@ pytest = "*"
 pytest-django = "*"
 pytest-pythonpath = "*"
 requests = "*"
+pika = "*"
 
 [requires]
 python_version = "3.10"

@@ -1,3 +1,4 @@
+import requests
 from rest_framework.decorators import action
 from rest_framework import filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -59,8 +60,8 @@ class PageViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = User.objects.get(id=request.user.pk)
-        name = serializer.validated_data.get('name'),
-        description = serializer.validated_data.get('description'),
+        name = serializer.validated_data.get('name')
+        description = serializer.validated_data.get('description')
         is_private = serializer.validated_data.get('is_private', False)
         create_page = PageServices.create_page(name, description, user, is_private)
         return Response(

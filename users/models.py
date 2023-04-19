@@ -1,9 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import validate_image_file_extension
 from django.db import models
-from django.db.models.signals import post_save
-
-from users import signals
 
 
 def user_directory_path(instance, filename):
@@ -38,6 +35,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-
-
-post_save.connect(signals.block_unblock_signal, sender=User)
