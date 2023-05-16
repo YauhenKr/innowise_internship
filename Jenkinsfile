@@ -3,16 +3,19 @@ pipeline{
     stages {
         stage('Build the containers'){
             steps  {
-                sh "docker-compose build -up"                }
+                sh "docker-compose build -up"
+                }
             }
         stage('Linters with flake8'){
             steps {
-                sh 'flake8 .'
+                sh "docker-compose build -up",
+                sh "docker exec -it django bach -c 'flake8 .'"
             }
         }
         stage('Test'){
             steps {
-                sh 'pytest'
+                sh "docker-compose build -up",
+                sh "docker exec -it django bach -c 'pytest'"
             }
         }
     }
