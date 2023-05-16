@@ -33,19 +33,19 @@ pipeline{
     stages {
         stage('Build the containers'){
             steps  {
-                sh "sudo docker-compose build -up"
+                sh "docker-compose build -up"
                 }
             }
         stage('Linters with flake8'){
             steps {
 //                 sh "docker-compose build -up",
-                sh "sudo docker exec -it django bash -c 'flake8 .'"
+                sh "docker exec -it django bash -c 'flake8 .'"
             }
         }
         stage('Test'){
             steps {
 //                 sh "docker-compose build -up",
-                sh "sudo docker exec -it django bash -c 'pytest'"
+                sh "docker exec -it django bash -c 'pytest'"
                 }
             }
         }
