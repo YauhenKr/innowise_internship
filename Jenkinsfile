@@ -20,8 +20,8 @@ pipeline{
                     // Run tests in one of the built containers
                     def containerName = "django"
                     sh "docker run --rm ${containerName} pytest"
-                }
-            }
+                
+            
         }
             }
         }
