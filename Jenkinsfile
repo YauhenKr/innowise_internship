@@ -3,7 +3,8 @@ pipeline{
     stages {
         stage('Build the containers'){
             steps  {
-                sh "docker-compose build -up"
+                sh "docker-compose build -up",
+                echo "Containers was built successfully"
                 }
             }
         stage('Linters with flake8'){
