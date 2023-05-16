@@ -11,11 +11,18 @@ pipeline{
 //                 sh "docker exec -it django bach -c 'flake8 .'"
 //             }
 //         }
-        stage('Test'){
+//         stage('Test'){
+//             steps {
+//                sh "docker exec -it django bach -c 'pytest'"
+        stage('Test') {
             steps {
-//                 sh "docker exec -it django bach -c 'pytest'"
-                def containerName = "django"
-                sh "docker run --rm ${containerName} pytest"
+                script {
+                    // Run tests in one of the built containers
+                    def containerName = "django"
+                    sh "docker run --rm ${containerName} pytest"
+                }
+            }
+        }
             }
         }
     }
