@@ -22,6 +22,8 @@ pytest-django = "*"
 pytest-pythonpath = "*"
 requests = "*"
 pika = "*"
+flake8 = "*"
+flake8-django = "*"
 
 [requires]
 python_version = "3.10"
