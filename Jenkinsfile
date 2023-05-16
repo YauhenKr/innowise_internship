@@ -47,6 +47,7 @@ pipeline{
                 def test_image = docker.build('my-app-tests')
                 test_image.inside {
                     sh "docker exec -it django bach -c 'pytest'"
+                }
             }
         }
     }
