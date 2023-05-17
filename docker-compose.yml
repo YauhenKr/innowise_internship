@@ -14,7 +14,11 @@ services:
         networks:
             - main
         depends_on:
+            postgresql:
+                condition: service_healthy
+        links:
             - postgresql
+            
     postgresql:
         image: postgres
         container_name: postgresql
@@ -26,6 +30,12 @@ services:
             - main
         env_file:
             - .env
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+            
     rabbit:
         image: rabbitmq:3.11.11-management-alpine
         hostname: rabbit
