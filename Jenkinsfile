@@ -36,17 +36,23 @@ pipeline{
                 sh "docker-compose build -up"
                 }
             }
-        stage('Linters with flake8'){
-            steps {
-//                 sh "docker-compose build -up",
-                sh "docker exec --interactive --tty --user root django bash -c 'flake8 .'"
-            }
-        }
         stage('Test'){
             steps {
 //                 sh "docker-compose build -up",
                 sh "docker exec -it django bash -c 'pytest'"
                 }
             }
+        stage('Linters with flake8'){
+            steps {
+//                 sh "docker-compose build -up",
+                sh "docker exec --interactive --tty --user root django bash -c 'flake8 .'"
+            }
+        }
+//         stage('Test'){
+//             steps {
+// //                 sh "docker-compose build -up",
+//                 sh "docker exec -it django bash -c 'pytest'"
+//                 }
+//             }
         }
     }
