@@ -39,7 +39,7 @@ pipeline{
         stage('Test'){
             steps {
 //                 sh "docker-compose build -up",
-                sh "docker exec -it django bash -c 'pytest'"
+                sh "docker exec -T django bash -c 'pytest'"
                 }
             }
         stage('Linters with flake8'){
