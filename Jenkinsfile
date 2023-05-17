@@ -8,8 +8,8 @@ pipeline{
             }
         stage('Test'){
             steps {
-                sh "docker-compose build -up",
-                sh "docker exec -i django bash -c 'pytest'"
+                sh 'docker-compose build -up',
+                sh 'docker exec -i django bash -c "pytest"'
                 }
             }
         stage('Linters with flake8'){
