@@ -8,7 +8,7 @@ pipeline{
             }
         stage('Test'){
             steps {
-                sh 'docker-compose build -up',
+                sh 'docker-compose build -up'
                 sh 'docker exec -i django bash -c "pytest"'
                 }
             }
