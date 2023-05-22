@@ -39,6 +39,8 @@ pipeline {
                 script {
                     // Определение пути до файла docker-compose.yml
                     def dockerComposeFile = 'docker-compose.yml'
+                    
+                    sh "docker-compose -f ${dockerComposeFile} down"
 
                     // Запуск команды docker-compose up для сборки контейнеров
                     sh "docker-compose -f ${dockerComposeFile} up -d"
@@ -69,17 +71,17 @@ pipeline {
                     if (postgresContainer) {
                         echo "Контейнер с PostgreSQL запущен."
                         // Вывод списка таблиц
-                        sh "docker exec -i pet_postgres psql -U postgres -c '\\dt'"
+                        sh "docker exec -i postgresql psql -U postgres -c '\\dt'"
                     } else {
                         error "Контейнер с PostgreSQL не найден."
                     }
                     sh 'sleep 15'
                     // Запуск тестов с помощью pytest
-                    sh "docker exec -i petproject python manage.py makemigrations"
-                    sh "docker exec -i petproject python manage.py migrate"
-                    sh "docker exec -i petproject python manage.py migrate django_celery_results"
+                    sh "docker exec -i django python manage.py makemigrations"
+                    sh "docker exec -i django python manage.py migrate"
+                    sh "docker exec -i django python manage.py migrate django_celery_results"
 
-                    sh "docker exec -i petproject pytest"
+                    sh "docker exec -i django pytest"
                 }
             }
         }
