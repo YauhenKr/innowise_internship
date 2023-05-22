@@ -40,7 +40,7 @@ pipeline {
                     // Определение пути до файла docker-compose.yml
                     def dockerComposeFile = 'docker-compose.yml'
                     
-                    sh "docker-compose -f ${dockerComposeFile} down"
+//                     sh "docker-compose -f ${dockerComposeFile} down"
 
                     // Запуск команды docker-compose up для сборки контейнеров
                     sh "docker-compose -f ${dockerComposeFile} up -d"
