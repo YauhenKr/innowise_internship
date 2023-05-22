@@ -8,10 +8,10 @@ pipeline{
             }
         stage('Test'){
             steps {
-                sh 'docker-compose build'
+                sh "docker-compose build --no-cache"
                 sh 'docker start django'
                 sh 'docker start postgresql'
-//                 sh 'docker exec -i django apk add --no-cache bash'
+                sh 'docker exec -i django apk add --no-cache bash'
                 sh 'docker exec -i django bash -c "python manage.py migrate"'
                 sh 'docker exec -i django bash -c "pytest"'
                 }
