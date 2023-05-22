@@ -50,18 +50,18 @@ services:
         ports:
             - "5672:5672"
             - "15672:15672"
-   celery-worker:
-       container_name: celery-worker
-       hostname: celery-worker
-       build: .
-       command: celery -A core worker -l INFO
-       volumes:
-           - ./:/app
-       networks:
-           - main
-       depends_on:
-           - rabbit
-           - django
+    celery-worker:
+        container_name: celery-worker
+        hostname: celery-worker
+        build: .
+        command: celery -A core worker -l INFO
+        volumes:
+            - ./:/app
+        networks:
+            - main
+        depends_on:
+            - rabbit
+            - django
 
 networks:
     main:
