@@ -150,7 +150,7 @@ AUTH_USER_MODEL = 'users.User'
 JWT_AUTH = {
     'JWT_VERIFY': os.getenv('JWT_VERIFY'),
     'JWT_VERIFY_EXPIRATION': os.getenv('JWT_VERIFY_EXPIRATION'),
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=float(os.getenv('JWT_EXPIRATION_DELTA'))),
+    'JWT_EXPIRATION_DELTA': 5000,
     'JWT_AUTH_HEADER_PREFIX': os.getenv('JWT_AUTH_HEADER_PREFIX'),
     'SIGNING_KEY': os.getenv('SECRET_KEY'),
     'ALGORITHM': os.getenv('JWT_ALGORITHM'),
