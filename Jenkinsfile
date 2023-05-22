@@ -66,7 +66,7 @@ pipeline {
             steps {
                 script {
                     // Проверка наличия контейнера с PostgreSQL
-                    def postgresContainer = sh(script: "docker-compose ps -q db_postgresql", returnStdout: true).trim()
+                    def postgresContainer = sh(script: "docker-compose ps -q postgresql", returnStdout: true).trim()
 
                     if (postgresContainer) {
                         echo "Контейнер с PostgreSQL запущен."
