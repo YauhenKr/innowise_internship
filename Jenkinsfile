@@ -38,7 +38,7 @@ pipeline {
             steps {
                 script {
                     // Определение пути до файла docker-compose.yml
-                    def dockerComposeFile = './docker-compose.yml'
+                    def dockerComposeFile = 'docker-compose.yml'
 
                     // Запуск команды docker-compose up для сборки контейнеров
                     sh "docker-compose -f ${dockerComposeFile} up -d"
