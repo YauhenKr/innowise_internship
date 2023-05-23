@@ -45,7 +45,7 @@ pipeline {
                     sh "docker exec -i django python manage.py makemigrations"
                     sh "docker exec -i django python manage.py migrate"
                     sh "docker exec -i django python manage.py migrate django_celery_results"
-                    sh "docker logs -f rabbit"
+//                     sh "docker logs -f rabbit"
 
                     sh "docker exec -i django pytest"
                 }
