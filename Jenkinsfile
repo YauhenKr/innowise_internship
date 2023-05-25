@@ -74,8 +74,8 @@ pipeline {
 
         stage('Push') {
             steps {
-              sh 'docker push yauhenkryvanos/celery_worker:latest'
-              sh 'docker push yauhenkryvanos/django_petproject:latest'
+              sh 'docker push celery_worker:latest'
+              sh 'docker push django_petproject:latest'
             }
           }
         }
