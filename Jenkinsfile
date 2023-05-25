@@ -69,7 +69,7 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                sh 'docker push forartsake/petinnowise:latest'
+                sh 'docker push yauhenkryvanos/petinnowise:latest'
             }
         }
     }
