@@ -52,27 +52,36 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                sh 'pwd' // Вывод текущего каталога
-                sh 'sudo docker build -t yauhenkryvanos/petinnowise:latest .'
-            }
-        }
-
         stage('Docker Login') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhubaccount', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                    sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
-                }
+          steps {
+            withCredentials([usernamePassword(credentialsId: 'dockerhubaccount', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+              sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
             }
+          }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                sh 'docker push yauhenkryvanos/petinnowise:latest'
-            }
+        stage('Build') {
+          steps {
+            sh 'sudo docker-compose build'
+          }
         }
+
+        stage('Rename') {
+          steps {
+            sh 'docker tag innotter-celery_worker:latest yauhenkryvanos/celery_worker:latest'
+            sh 'docker tag innotter-django_petproject:latest yauhenkryvanos/django_petproject:latest'
+          }
+        }
+
+        stage('Push') {
+          steps {
+            sh 'docker push yauhenkryvanos/celery_worker:latest'
+            sh 'docker push yauhenkryvanos/django_petproject:latest'
+          }
+        }
+      }
     }
+
 
     post {
         always {
