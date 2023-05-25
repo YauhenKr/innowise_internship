@@ -67,8 +67,8 @@ pipeline {
 
         stage('Rename') {
             steps {
-              sh 'docker tag innottwits-celery_worker:latest yauhenkryvanos/celery_worker:latest'
-              sh 'docker tag innottwits-django:latest yauhenkryvanos/django:latest'
+              sh 'docker tag celery_worker:latest yauhenkryvanos/celery_worker:latest'
+              sh 'docker tag django:latest yauhenkryvanos/django:latest'
             }
           }
 
