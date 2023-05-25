@@ -27,72 +27,57 @@ pipeline {
             }
         }
 
-        stage('Test') {
+//         stage('Test') {
+//             steps {
+//                 script {
+//                     // Проверка наличия контейнера с PostgreSQL
+//                     def postgresContainer = sh(script: "docker-compose ps -q postgresql", returnStdout: true).trim()
+
+//                     if (postgresContainer) {
+//                         echo "Контейнер с PostgreSQL запущен."
+//                         // Вывод списка таблиц
+//                         sh "docker exec -i postgresql psql -U postgres -c '\\dt'"
+//                     } else {
+//                         error "Контейнер с PostgreSQL не найден."
+//                     }
+//                     sh 'sleep 15'
+//                     // Запуск тестов с помощью pytest
+//                     sh "docker exec -i django python manage.py makemigrations"
+//                     sh "docker exec -i django python manage.py migrate"
+//                     sh "docker exec -i django python manage.py migrate django_celery_results"
+//                     sh "docker exec -i django pytest"
+//                 }
+//             }
+//         }
+
+        stage('Docker Login') {
             steps {
-                script {
-                    // Проверка наличия контейнера с PostgreSQL
-                    def postgresContainer = sh(script: "docker-compose ps -q postgresql", returnStdout: true).trim()
-
-                    if (postgresContainer) {
-                        echo "Контейнер с PostgreSQL запущен."
-                        // Вывод списка таблиц
-                        sh "docker exec -i postgresql psql -U postgres -c '\\dt'"
-                    } else {
-                        error "Контейнер с PostgreSQL не найден."
-                    }
-                    sh 'sleep 15'
-                    // Запуск тестов с помощью pytest
-                    sh "docker exec -i django python manage.py makemigrations"
-                    sh "docker exec -i django python manage.py migrate"
-                    sh "docker exec -i django python manage.py migrate django_celery_results"
-//                     sh "docker logs -f rabbit"
-
-                    sh "docker exec -i django pytest"
-                }
+              withCredentials([usernamePassword(credentialsId: 'dockerhubaccount', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+              }
             }
+          }
+
+        stage('Build') {
+            steps {
+              sh 'sudo docker-compose build'
+            }
+          }
+
+        stage('Rename') {
+            steps {
+              sh 'docker tag innotter-celery_worker:latest yauhenkryvanos/celery_worker:latest'
+              sh 'docker tag innotter-django_petproject:latest yauhenkryvanos/django_petproject:latest'
+            }
+          }
+
+        stage('Push') {
+            steps {
+              sh 'docker push yauhenkryvanos/celery_worker:latest'
+              sh 'docker push yauhenkryvanos/django_petproject:latest'
+            }
+          }
         }
-
-//         stage('Docker Login') {
-//           steps {
-//             withCredentials([usernamePassword(credentialsId: 'dockerhubaccount', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-//               sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
-//             }
-//           }
-//         }
-
-//         stage('Build') {
-//           steps {
-//             sh 'sudo docker-compose build'
-//           }
-//         }
-
-//         stage('Rename') {
-//           steps {
-//             sh 'docker tag innotter-celery_worker:latest yauhenkryvanos/celery_worker:latest'
-//             sh 'docker tag innotter-django_petproject:latest yauhenkryvanos/django_petproject:latest'
-//           }
-//         }
-
-//         stage('Push') {
-//           steps {
-//             sh 'docker push yauhenkryvanos/celery_worker:latest'
-//             sh 'docker push yauhenkryvanos/django_petproject:latest'
-//           }
-//         }
-//       }
-//     }
-
-
-//     post {
-//         always {
-//             // Завершение и очистка контейнеров после выполнения пайплайна
-//             script {
-//                 def dockerComposeFile = './docker-compose.yml'
-
-//                 // Остановка и удаление контейнеров
-//                 sh "docker-compose -f ${dockerComposeFile} down"
-//             }
-//         }
-//     }
+      }
 }
 }
