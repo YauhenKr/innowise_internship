@@ -83,16 +83,16 @@ pipeline {
 //     }
 
 
-    post {
-        always {
-            // Завершение и очистка контейнеров после выполнения пайплайна
-            script {
-                def dockerComposeFile = './docker-compose.yml'
+//     post {
+//         always {
+//             // Завершение и очистка контейнеров после выполнения пайплайна
+//             script {
+//                 def dockerComposeFile = './docker-compose.yml'
 
-                // Остановка и удаление контейнеров
-                sh "docker-compose -f ${dockerComposeFile} down"
-            }
-        }
-    }
+//                 // Остановка и удаление контейнеров
+//                 sh "docker-compose -f ${dockerComposeFile} down"
+//             }
+//         }
+//     }
 }
 }
