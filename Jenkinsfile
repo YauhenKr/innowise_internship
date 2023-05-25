@@ -68,15 +68,15 @@ pipeline {
 
         stage('Rename') {
             steps {
-              sh 'sudo docker tag celery_worker yauhenkryvanos/celery_worker'
-              sh 'sudo docker tag django yauhenkryvanos/django'
+              sh 'sudo docker tag innotter_celery_worker:latest yauhenkryvanos/celery_worker:latest'
+              sh 'sudo docker tag innotter_django:latest yauhenkryvanos/django:latest'
             }
           }
 
         stage('Push') {
             steps {
-              sh 'docker push yauhenkryvanos/celery_worker'
-              sh 'docker push yauhenkryvanos/django'
+              sh 'docker push yauhenkryvanos/celery_worker:latest'
+              sh 'docker push yauhenkryvanos/django:latest'
             }
           }
         }
