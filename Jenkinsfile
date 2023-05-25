@@ -65,17 +65,17 @@ pipeline {
             }
           }
 
-//         stage('Rename') {
-//             steps {
-//               sh 'docker tag celery_worker:latest yauhenkryvanos/celery_worker:latest'
-//               sh 'docker tag django:latest yauhenkryvanos/django:latest'
-//             }
-//           }
+        stage('Rename') {
+            steps {
+              sh 'sudo docker tag celery_worker yauhenkryvanos/celery_worker:latest'
+              sh 'sudo docker tag django yauhenkryvanos/django:latest'
+            }
+          }
 
         stage('Push') {
             steps {
-              sh 'docker push celery_worker:latest'
-              sh 'docker push django_petproject:latest'
+              sh 'docker push yauhenkryvanos/celery_worker:latest'
+              sh 'docker push yauhenkryvanos/django:latest'
             }
           }
         }
