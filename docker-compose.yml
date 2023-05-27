@@ -23,7 +23,7 @@ services:
         image: postgres
         container_name: postgresql
         volumes:
-            - ./data/postgres:/var/lib/postgresql/data/
+            - ./var/lib/postgresql/data/
         ports:
             - "5432:5432"
         networks:
